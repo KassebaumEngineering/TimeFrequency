@@ -1,11 +1,14 @@
 #
 # Makefile for Spectral Analysis Tools
 # 
-# $Id: Makefile,v 1.4 1994/10/27 09:11:28 jak Exp $
+# $Id: Makefile,v 1.5 1994/12/06 05:28:15 jak Exp $
 #
 # History:
 # $Log: Makefile,v $
-# Revision 1.4  1994/10/27 09:11:28  jak
+# Revision 1.5  1994/12/06 05:28:15  jak
+# Removed error condition in makefile install target. -jak
+#
+# Revision 1.4  1994/10/27  09:11:28  jak
 # Fixes, including anti-aliasing additions. -jak
 #
 # Revision 1.3  1994/10/07  06:55:26  jak
@@ -56,9 +59,9 @@ distclean:
 
 install:
 	cp main $(HOME)/Apps/tfd
-	ln -s ./tfd $(HOME)/Apps/Spectrogram
-	ln -s ./tfd $(HOME)/Apps/Wigner
-	ln -s ./tfd $(HOME)/Apps/Choi_Williams
+	-ln -s ./tfd $(HOME)/Apps/Spectrogram
+	-ln -s ./tfd $(HOME)/Apps/Wigner
+	-ln -s ./tfd $(HOME)/Apps/Choi_Williams
 
 $(DEPENDOBJ): %.d: %.cc
 	$(SHELL) -ec '$(CC) -M -c $(CFLAGS) $< | sed '\''s/$*.o/& $@/g'\'' > $@'
