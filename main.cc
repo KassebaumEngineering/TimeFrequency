@@ -3,12 +3,16 @@
 //
 // C++ Main Program for Calculating Data Distributions 
 //
-//  $Id: main.cc,v 1.2 1994/10/06 17:52:02 jak Exp $
+//  $Id: main.cc,v 1.3 1994/10/07 06:55:33 jak Exp $
 //
 //  Author: John Kassebaum
 //
 // $Log: main.cc,v $
-// Revision 1.2  1994/10/06 17:52:02  jak
+// Revision 1.3  1994/10/07 06:55:33  jak
+// Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
+// be set from the command line!  -jak
+//
+// Revision 1.2  1994/10/06  17:52:02  jak
 // Made Fixes to several of the spectrum programs - have a preliminary version
 // of the Wigner distribution. -jak
 //
@@ -19,7 +23,7 @@
 //
 //
 
-static char rcsid_main_cc[] = "$Id: main.cc,v 1.2 1994/10/06 17:52:02 jak Exp $";
+static char rcsid_main_cc[] = "$Id: main.cc,v 1.3 1994/10/07 06:55:33 jak Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,17 +42,18 @@ static char rcsid_main_cc[] = "$Id: main.cc,v 1.2 1994/10/06 17:52:02 jak Exp $"
 #define DESCR_3    " -s            prints statistics\n"
 #define DESCR_4    " -w  <int>     set sampling window width (in samples)\n"
 #define DESCR_4_1  "   (default %d samples)\n"
-#define DESCR_5    " -r  <float>   set sampling frequency value (in Hz)\n"
-#define DESCR_5_1  "   (default %d Hz)\n"
-#define DESCR_6    " -bi           set input file type to binary (float)\n"
-#define DESCR_7    " -bo           set output file type to binary (float)\n"
-#define DESCR_8    " -no           request no output\n"
-#define DESCR_9    " -d <string>   set distribution type (default FFT)\n"
-#define DESCR_9_1  "    choices: FFT, Wigner, Choi-Williams, None\n"
-#define DESCR_10   "\n data_file  -  A file of floating point numbers\n"
-#define DESCR_11   "(default) in ascii format, with one number per line. \n "
-#define DESCR_12   "example:\n"
-#define DESCR_13   " -47.52\n -39.59\n -27.72\n -15.84\n"
+#define DESCR_5    " -ss <int>     set spectrum spacing (in samples)\n"
+#define DESCR_6    " -r  <float>   set sampling frequency value (in Hz)\n"
+#define DESCR_6_1  "   (default %d Hz)\n"
+#define DESCR_7    " -bi           set input file type to binary (float)\n"
+#define DESCR_8    " -bo           set output file type to binary (float)\n"
+#define DESCR_9    " -no           request no output\n"
+#define DESCR_10    " -d <string>   set distribution type (default FFT)\n"
+#define DESCR_10_1  "    choices: FFT, Wigner, Choi-Williams, None\n"
+#define DESCR_11   "\n data_file  -  A file of floating point numbers\n"
+#define DESCR_12   "(default) in ascii format, with one number per line. \n "
+#define DESCR_13   "example:\n"
+#define DESCR_14   " -47.52\n -39.59\n -27.72\n -15.84\n"
 //
 // ------------------------------------------------------------------------
 //
@@ -74,7 +79,7 @@ main(int argc,char **argv)
 {
     int c,i,j,k;
     int verbose, stats, flag;
-	int window_width, binary_input, binary_output, no_output;
+	int window_width, stride, binary_input, binary_output, no_output;
 	float sampling_rate;
 	TFD  chosen_distribution;
     long int data_count;
@@ -89,6 +94,7 @@ main(int argc,char **argv)
     verbose = 0;
     stats = 0;
 	window_width = DEFAULT_WINDOW;
+    stride = DEFAULT_WINDOW/2;
 	binary_input = 0;
 	binary_output = 0;
 	no_output = 0;
@@ -119,16 +125,17 @@ main(int argc,char **argv)
             fprintf(stderr,DESCR_4);
             fprintf(stderr,DESCR_4_1, DEFAULT_WINDOW);
             fprintf(stderr,DESCR_5);
-            fprintf(stderr,DESCR_5_1, DEFAULT_SAMPLING_RATE);
             fprintf(stderr,DESCR_6);
+            fprintf(stderr,DESCR_6_1, DEFAULT_SAMPLING_RATE);
             fprintf(stderr,DESCR_7);
             fprintf(stderr,DESCR_8);
             fprintf(stderr,DESCR_9);
-            fprintf(stderr,DESCR_9_1);
             fprintf(stderr,DESCR_10);
+            fprintf(stderr,DESCR_10_1);
             fprintf(stderr,DESCR_11);
             fprintf(stderr,DESCR_12);
             fprintf(stderr,DESCR_13);
+            fprintf(stderr,DESCR_14);
             exit(0);
         } else if (!strcmp( argv[ c ],"-v")){
             verbose = 1;
@@ -137,6 +144,9 @@ main(int argc,char **argv)
         } else if (!strcmp( argv[ c ],"-w")){
 		    c++;
 			window_width = atoi( argv[ c ] );
+        } else if (!strcmp( argv[ c ],"-ss")){
+		    c++;
+            stride = atoi( argv[ c ] );
         } else if (!strcmp( argv[ c ],"-r")){
 		    c++;
 			sampling_rate = atof( argv[ c ] );
@@ -275,11 +285,11 @@ main(int argc,char **argv)
 				mySpectrogram.setDataSignal( data, data_count );
 				mySpectrogram.setSamplingFrequency( sampling_rate );
 				mySpectrogram.setWindowSize( window_width );
-				mySpectrogram.setWindowStride( window_width );
+				mySpectrogram.setWindowStride( stride );
 				if (stats) {
 					fprintf(stderr, "Sampling Frequency %f => %f Hz.\n", sampling_rate,  mySpectrogram.getSamplingFrequency());
 					fprintf(stderr, "Window Width %d => %d samples.\n", window_width, mySpectrogram.getWindowSize());
-					fprintf(stderr, "Window Stride %d => %d samples.\n", window_width, mySpectrogram.getWindowStride());
+					fprintf(stderr, "Window Stride %d => %d samples.\n", stride, mySpectrogram.getWindowStride());
 					fprintf(stderr, "Time Slots = %d \n", mySpectrogram.getTimeSlots());
 					fprintf(stderr, "Spectrum Data length = %d \n", mySpectrogram.getSpectrumDataLength());
  				}
@@ -298,11 +308,11 @@ main(int argc,char **argv)
 				myWigner.setDataSignal( data, data_count );
 				myWigner.setSamplingFrequency( sampling_rate );
 				myWigner.setWindowSize( window_width );
-				myWigner.setWindowStride( window_width );
+				myWigner.setWindowStride( stride );
 				if (stats) {
 					fprintf(stderr, "Sampling Frequency %f => %f Hz.\n", sampling_rate,  myWigner.getSamplingFrequency());
 					fprintf(stderr, "Window Width %d => %d samples.\n", window_width, myWigner.getWindowSize());
-					fprintf(stderr, "Window Stride %d => %d samples.\n", window_width, myWigner.getWindowStride());
+					fprintf(stderr, "Window Stride %d => %d samples.\n", stride, myWigner.getWindowStride());
 					fprintf(stderr, "Time Slots = %d \n", myWigner.getTimeSlots());
 					fprintf(stderr, "Spectrum Data length = %d \n", myWigner.getSpectrumDataLength());
  				}

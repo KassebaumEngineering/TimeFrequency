@@ -1,11 +1,15 @@
 #
 # Makefile for Spectral Analysis Tools
 # 
-# $Id: Makefile,v 1.2 1994/10/06 17:51:53 jak Exp $
+# $Id: Makefile,v 1.3 1994/10/07 06:55:26 jak Exp $
 #
 # History:
 # $Log: Makefile,v $
-# Revision 1.2  1994/10/06 17:51:53  jak
+# Revision 1.3  1994/10/07 06:55:26  jak
+# Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
+# be set from the command line!  -jak
+#
+# Revision 1.2  1994/10/06  17:51:53  jak
 # Made Fixes to several of the spectrum programs - have a preliminary version
 # of the Wigner distribution. -jak
 #
@@ -17,7 +21,7 @@
 #
 
 CC=gcc
-CFLAGS=-g -O2 -V2.5.8
+CFLAGS=-ggdb3 -O2 -V2.5.8
 LIBS=-lm -lg++
 
 SOURCES= Makefile main.cc fft.cc TimeFrequency.h TimeFrequency.cc Spectrogram.cc Spectrogram.h sine.c Wigner.cc Wigner.h

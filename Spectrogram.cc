@@ -3,21 +3,25 @@
 //
 // C++ Implementation of Short Time Fourier Transform Spectrogram Object
 //
-//  $Id: Spectrogram.cc,v 1.2 1994/10/06 17:51:55 jak Exp $
+//  $Id: Spectrogram.cc,v 1.3 1994/10/07 06:55:28 jak Exp $
 //
 //  Author: John Kassebaum
 //
 /* $Log: Spectrogram.cc,v $
-/* Revision 1.2  1994/10/06 17:51:55  jak
-/* Made Fixes to several of the spectrum programs - have a preliminary version
-/* of the Wigner distribution. -jak
+/* Revision 1.3  1994/10/07 06:55:28  jak
+/* Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
+/* be set from the command line!  -jak
 /*
+// Revision 1.2  1994/10/06  17:51:55  jak
+// Made Fixes to several of the spectrum programs - have a preliminary version
+// of the Wigner distribution. -jak
+//
 // Revision 1.1.1.1  1994/10/04  07:21:05  jak
 // Placing Time/Frequency Code under CVS control.  Only Spectrogram
 // works currently.  -jak
 //*/
 
-static char rcsid_Spectrogram_cc[] = "$Id: Spectrogram.cc,v 1.2 1994/10/06 17:51:55 jak Exp $";
+static char rcsid_Spectrogram_cc[] = "$Id: Spectrogram.cc,v 1.3 1994/10/07 06:55:28 jak Exp $";
 
 #include "Spectrogram.h"
 #include <math.h>
@@ -26,6 +30,7 @@ static char rcsid_Spectrogram_cc[] = "$Id: Spectrogram.cc,v 1.2 1994/10/06 17:51
 #include <stdio.h>
 
 #define DEBUG
+#define POSITIVE_F_ONLY
 
 #define BLOCKSIZE    1024
 #define Null(A)             ((A *) 0)
@@ -86,7 +91,7 @@ void Spectrogram:: setWindowStride( unsigned short astride )
 	}
 	
 	for( i=0; i< time_slots; i++){
-	    spectrogram[i] = &( spectrogram[0][ i*getWindowStride() ] );
+	    spectrogram[i] = &( spectrogram[0][ i*getWindowSize() ] );
 	}
 	isComputed = 0;
 };
@@ -168,20 +173,34 @@ void Spectrogram:: print_Gnuplot()
   register int i,j, status;
   float length, cnt, temp;
 
+#ifdef POSITIVE_F_ONLY
   length = (float) getWindowSize() / 2.0;
+#else
+  length = (float) getWindowSize(); // 2.0;
+#endif
 
   if((status = fwrite((char*)&length, sizeof(float), 1, stdout))!=1){
     fprintf(stderr,"Spectrogram:: print_Gnuplot() - fwrite 1 returned %d\n",status);
     abort();
   }
   
-  for( cnt = getBandWidth()/2.0 - getFrequencyResolution(); cnt >= 0.0; cnt -= getFrequencyResolution()){
+  for( cnt = 0.0; cnt < getBandWidth()/2.0; cnt += getFrequencyResolution()){
       fwrite((char*)&cnt, sizeof(float), 1, stdout);
   }
+
+#ifndef POSITIVE_F_ONLY
+  for( cnt = -getBandWidth()/2.0; cnt < 0.0; cnt += getFrequencyResolution()){
+      fwrite((char*)&cnt, sizeof(float), 1, stdout);
+  }
+#endif
     
   for(j=0, cnt=(getWindowSize()/getBandWidth()); j < time_slots; j++, cnt += (getWindowStride() / getBandWidth())) {
       fwrite((char*)(&cnt), sizeof(float), 1, stdout);
-      for(i=getWindowSize()/2; i< getWindowSize(); i++) {
+#ifdef POSITIVE_F_ONLY
+      for(i=0; i< getWindowSize()/2; i++) {
+#else
+      for(i=0; i< getWindowSize(); i++) {
+#endif
           temp = norm( spectrogram[j][i] );
           fwrite((char*)(&temp), sizeof(float), 1, stdout);
       }

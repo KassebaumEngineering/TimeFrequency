@@ -3,16 +3,21 @@
 //
 // C++ Implementation of TimeFrequency Object
 //
-//  $Id: TimeFrequency.cc,v 1.1 1994/10/04 07:21:04 jak Exp $
+//  $Id: TimeFrequency.cc,v 1.2 1994/10/07 06:55:29 jak Exp $
 //
 //  Author: John Kassebaum
 //
 /* $Log: TimeFrequency.cc,v $
-/* Revision 1.1  1994/10/04 07:21:04  jak
-/* Initial revision
-/**/
+/* Revision 1.2  1994/10/07 06:55:29  jak
+/* Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
+/* be set from the command line!  -jak
+/*
+// Revision 1.1.1.1  1994/10/04  07:21:05  jak
+// Placing Time/Frequency Code under CVS control.  Only Spectrogram
+// works currently.  -jak
+//*/
 
-static char rcsid_TimeFrequency_cc[] = "$Id: TimeFrequency.cc,v 1.1 1994/10/04 07:21:04 jak Exp $";
+static char rcsid_TimeFrequency_cc[] = "$Id: TimeFrequency.cc,v 1.2 1994/10/07 06:55:29 jak Exp $";
 
 #include "TimeFrequency.h"
 #include <math.h>
@@ -23,7 +28,7 @@ static char rcsid_TimeFrequency_cc[] = "$Id: TimeFrequency.cc,v 1.1 1994/10/04 0
 #define DEBUG
 
 #define DEFAULT_WSIZE  256   // Must be a power of 2
-#define HALF_HILBERT   30    // half-length of Hilbert transform filter 
+#define HALF_HILBERT   34    // half-length of Hilbert transform filter 
 #define HILBERT_SIZE   2*HALF_HILBERT + 1   // Must be odd
 
 #define BLOCKSIZE    1024
@@ -156,8 +161,8 @@ void TimeFrequency::makeAnalytic()
 		hilbert_h[HALF_HILBERT] = 0.0;
 		for (i=1; i<=HALF_HILBERT; i++) {
 			hamming = 0.54 + 0.46*cos( M_PI * (double)i / (double)(HALF_HILBERT) );
-			hilbert_h[HALF_HILBERT+i] = hamming * ( -(double)( i%2 ) * 2.0 / ( M_PI * (double)(i) ) );
-			hilbert_h[HALF_HILBERT-i] = -hilbert_h[HALF_HILBERT+i];
+			hilbert_h[HALF_HILBERT-i] = hamming * ( -(double)( i%2 ) * 2.0 / ( M_PI * (double)(i) ) );
+			hilbert_h[HALF_HILBERT+i] = -hilbert_h[HALF_HILBERT-i];
 		}
 		initialized = 1;
 #ifdef DEBUG
