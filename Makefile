@@ -1,12 +1,17 @@
 #
 # Makefile for Spectral Analysis Tools
 # 
-# $Id: Makefile,v 1.1 1994/10/04 07:21:04 jak Exp $
+# $Id: Makefile,v 1.2 1994/10/06 17:51:53 jak Exp $
 #
 # History:
 # $Log: Makefile,v $
-# Revision 1.1  1994/10/04 07:21:04  jak
-# Initial revision
+# Revision 1.2  1994/10/06 17:51:53  jak
+# Made Fixes to several of the spectrum programs - have a preliminary version
+# of the Wigner distribution. -jak
+#
+# Revision 1.1.1.1  1994/10/04  07:21:05  jak
+# Placing Time/Frequency Code under CVS control.  Only Spectrogram
+# works currently.  -jak
 #
 #
 #
@@ -15,8 +20,8 @@ CC=gcc
 CFLAGS=-g -O2 -V2.5.8
 LIBS=-lm -lg++
 
-SOURCES= Makefile main.cc fft.cc TimeFrequency.h TimeFrequency.cc Spectrogram.cc Spectrogram.h sine.c
-OBJECTS= fft.o Spectrogram.o TimeFrequency.o
+SOURCES= Makefile main.cc fft.cc TimeFrequency.h TimeFrequency.cc Spectrogram.cc Spectrogram.h sine.c Wigner.cc Wigner.h
+OBJECTS= fft.o Spectrogram.o TimeFrequency.o Wigner.o
 EXES= main
 LINKS= Spectrogram Wigner Choi-Williams
 

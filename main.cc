@@ -3,24 +3,30 @@
 //
 // C++ Main Program for Calculating Data Distributions 
 //
-//  $Id: main.cc,v 1.1 1994/10/04 07:21:04 jak Exp $
+//  $Id: main.cc,v 1.2 1994/10/06 17:52:02 jak Exp $
 //
 //  Author: John Kassebaum
 //
 // $Log: main.cc,v $
-// Revision 1.1  1994/10/04 07:21:04  jak
-// Initial revision
+// Revision 1.2  1994/10/06 17:52:02  jak
+// Made Fixes to several of the spectrum programs - have a preliminary version
+// of the Wigner distribution. -jak
+//
+// Revision 1.1.1.1  1994/10/04  07:21:05  jak
+// Placing Time/Frequency Code under CVS control.  Only Spectrogram
+// works currently.  -jak
 //
 //
 //
 
-static char rcsid_main_cc[] = "$Id: main.cc,v 1.1 1994/10/04 07:21:04 jak Exp $";
+static char rcsid_main_cc[] = "$Id: main.cc,v 1.2 1994/10/06 17:52:02 jak Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
 #include "Spectrogram.h"
+#include "Wigner.h"
 
 //
 // Usage Info -------------------------------------------------------------
@@ -283,10 +289,29 @@ main(int argc,char **argv)
 				
 				break;
 			}
-		    case WT:
+		    case WT: {
+			    Wigner myWigner;
+			
 			    fprintf(stderr,"Call to WT\n");
 				no_output = 1;
+
+				myWigner.setDataSignal( data, data_count );
+				myWigner.setSamplingFrequency( sampling_rate );
+				myWigner.setWindowSize( window_width );
+				myWigner.setWindowStride( window_width );
+				if (stats) {
+					fprintf(stderr, "Sampling Frequency %f => %f Hz.\n", sampling_rate,  myWigner.getSamplingFrequency());
+					fprintf(stderr, "Window Width %d => %d samples.\n", window_width, myWigner.getWindowSize());
+					fprintf(stderr, "Window Stride %d => %d samples.\n", window_width, myWigner.getWindowStride());
+					fprintf(stderr, "Time Slots = %d \n", myWigner.getTimeSlots());
+					fprintf(stderr, "Spectrum Data length = %d \n", myWigner.getSpectrumDataLength());
+ 				}
+				myWigner.compute();
+                //mySpectrogram.print_Mathematica();
+                myWigner.print_Gnuplot();
+				
 				break;
+			}
 		    case CWD:
 			    fprintf(stderr,"Call to CWD\n");
 				no_output = 1;

@@ -3,19 +3,24 @@
 //
 // C++ interface to TimeFrequency Object
 //
-//  $Id: TimeFrequency.h,v 1.1 1994/10/04 07:21:04 jak Exp $
+//  $Id: TimeFrequency.h,v 1.2 1994/10/06 17:51:58 jak Exp $
 //
 //  Author: John Kassebaum
 //
 /* $Log: TimeFrequency.h,v $
-/* Revision 1.1  1994/10/04 07:21:04  jak
-/* Initial revision
-/**/
+/* Revision 1.2  1994/10/06 17:51:58  jak
+/* Made Fixes to several of the spectrum programs - have a preliminary version
+/* of the Wigner distribution. -jak
+/*
+ * Revision 1.1.1.1  1994/10/04  07:21:05  jak
+ * Placing Time/Frequency Code under CVS control.  Only Spectrogram
+ * works currently.  -jak
+ **/
 
 #ifndef _TimeFrequency_h
 #define _TimeFrequency_h
 
-static char rcsid_TimeFrequency_h[] = "$Id: TimeFrequency.h,v 1.1 1994/10/04 07:21:04 jak Exp $";
+static char rcsid_TimeFrequency_h[] = "$Id: TimeFrequency.h,v 1.2 1994/10/06 17:51:58 jak Exp $";
 
 class Complex;
 
@@ -41,7 +46,7 @@ public:
 	int              isAnalytic;
 
     TimeFrequency( void );
-	~TimeFrequency( void );
+	virtual ~TimeFrequency( void );
 	
 	inline void setDataWindow( Data_Window awin ) { myWindow = awin; };
 	int setWindowSize( unsigned short );

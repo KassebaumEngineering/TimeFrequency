@@ -3,16 +3,21 @@
 //
 // C++ Implementation of Short Time Fourier Transform Spectrogram Object
 //
-//  $Id: Spectrogram.cc,v 1.1 1994/10/04 07:21:04 jak Exp $
+//  $Id: Spectrogram.cc,v 1.2 1994/10/06 17:51:55 jak Exp $
 //
 //  Author: John Kassebaum
 //
 /* $Log: Spectrogram.cc,v $
-/* Revision 1.1  1994/10/04 07:21:04  jak
-/* Initial revision
-/**/
+/* Revision 1.2  1994/10/06 17:51:55  jak
+/* Made Fixes to several of the spectrum programs - have a preliminary version
+/* of the Wigner distribution. -jak
+/*
+// Revision 1.1.1.1  1994/10/04  07:21:05  jak
+// Placing Time/Frequency Code under CVS control.  Only Spectrogram
+// works currently.  -jak
+//*/
 
-static char rcsid_Spectrogram_cc[] = "$Id: Spectrogram.cc,v 1.1 1994/10/04 07:21:04 jak Exp $";
+static char rcsid_Spectrogram_cc[] = "$Id: Spectrogram.cc,v 1.2 1994/10/06 17:51:55 jak Exp $";
 
 #include "Spectrogram.h"
 #include <math.h>
@@ -174,7 +179,7 @@ void Spectrogram:: print_Gnuplot()
       fwrite((char*)&cnt, sizeof(float), 1, stdout);
   }
     
-  for(j=0, cnt=0.0; j < time_slots; j++, cnt += (getWindowStride() / getBandWidth())) {
+  for(j=0, cnt=(getWindowSize()/getBandWidth()); j < time_slots; j++, cnt += (getWindowStride() / getBandWidth())) {
       fwrite((char*)(&cnt), sizeof(float), 1, stdout);
       for(i=getWindowSize()/2; i< getWindowSize(); i++) {
           temp = norm( spectrogram[j][i] );
