@@ -3,12 +3,15 @@
 //
 // C++ Main Program for Calculating Data Distributions 
 //
-//  $Id: main.cc,v 1.3 1994/10/07 06:55:33 jak Exp $
+//  $Id: main.cc,v 1.4 1994/10/27 09:11:34 jak Exp $
 //
 //  Author: John Kassebaum
 //
 // $Log: main.cc,v $
-// Revision 1.3  1994/10/07 06:55:33  jak
+// Revision 1.4  1994/10/27 09:11:34  jak
+// Fixes, including anti-aliasing additions. -jak
+//
+// Revision 1.3  1994/10/07  06:55:33  jak
 // Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
 // be set from the command line!  -jak
 //
@@ -23,7 +26,7 @@
 //
 //
 
-static char rcsid_main_cc[] = "$Id: main.cc,v 1.3 1994/10/07 06:55:33 jak Exp $";
+static char rcsid_main_cc[] = "$Id: main.cc,v 1.4 1994/10/27 09:11:34 jak Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +34,7 @@ static char rcsid_main_cc[] = "$Id: main.cc,v 1.3 1994/10/07 06:55:33 jak Exp $"
 
 #include "Spectrogram.h"
 #include "Wigner.h"
+#include "Choi_Williams.h"
 
 //
 // Usage Info -------------------------------------------------------------
@@ -49,7 +53,7 @@ static char rcsid_main_cc[] = "$Id: main.cc,v 1.3 1994/10/07 06:55:33 jak Exp $"
 #define DESCR_8    " -bo           set output file type to binary (float)\n"
 #define DESCR_9    " -no           request no output\n"
 #define DESCR_10    " -d <string>   set distribution type (default FFT)\n"
-#define DESCR_10_1  "    choices: FFT, Wigner, Choi-Williams, None\n"
+#define DESCR_10_1  "    choices: FFT, Wigner, Choi_Williams, None\n"
 #define DESCR_11   "\n data_file  -  A file of floating point numbers\n"
 #define DESCR_12   "(default) in ascii format, with one number per line. \n "
 #define DESCR_13   "example:\n"
@@ -108,7 +112,7 @@ main(int argc,char **argv)
 	    chosen_distribution = STFT;
 	} else if ( !strcmp( argv[0],"Wigner") ){
 	    chosen_distribution = WT;
-	} else if ( !strcmp( argv[0],"Choi-Williams") ){
+	} else if ( !strcmp( argv[0],"Choi_Williams") ){
 	    chosen_distribution = CWD;
 	}
 	
@@ -162,7 +166,7 @@ main(int argc,char **argv)
 			    chosen_distribution = STFT;
 			} else if( !strcmp( argv[ c ],"Wigner") ){
 			    chosen_distribution = WT;
-			} else if( !strcmp( argv[ c ],"Choi-Williams") ){
+			} else if( !strcmp( argv[ c ],"Choi_Williams") ){
 			    chosen_distribution = CWD;
 			} else if( !strcmp( argv[ c ],"None") ){
 			    chosen_distribution = NONE;
@@ -317,15 +321,35 @@ main(int argc,char **argv)
 					fprintf(stderr, "Spectrum Data length = %d \n", myWigner.getSpectrumDataLength());
  				}
 				myWigner.compute();
-                //mySpectrogram.print_Mathematica();
+                //myWigner.print_Mathematica();
                 myWigner.print_Gnuplot();
 				
 				break;
 			}
-		    case CWD:
+		    case CWD:{
+			    Choi_Williams myCW;
+
 			    fprintf(stderr,"Call to CWD\n");
 				no_output = 1;
+
+				myCW.setDataSignal( data, data_count );
+				myCW.setSamplingFrequency( sampling_rate );
+				myCW.setWindowSize( window_width );
+				myCW.setWindowStride( stride );
+				myCW.setSigma( window_width*window_width );
+				if (stats) {
+					fprintf(stderr, "Sampling Frequency %f => %f Hz.\n", sampling_rate,  myCW.getSamplingFrequency());
+					fprintf(stderr, "Window Width %d => %d samples.\n", window_width, myCW.getWindowSize());
+					fprintf(stderr, "Window Stride %d => %d samples.\n", stride, myCW.getWindowStride());
+					fprintf(stderr, "Time Slots = %d \n", myCW.getTimeSlots());
+					fprintf(stderr, "Spectrum Data length = %d \n", myCW.getSpectrumDataLength());
+ 				}
+				myCW.compute();
+                //myCW.print_Mathematica();
+                myCW.print_Gnuplot();
+
 				break;
+            }
 		    case NONE:
 			    fprintf(stderr,"No Distribution Calculated.\n");
 		        output_data = data;

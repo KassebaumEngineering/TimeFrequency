@@ -1,11 +1,14 @@
 #
 # Makefile for Spectral Analysis Tools
 # 
-# $Id: Makefile,v 1.3 1994/10/07 06:55:26 jak Exp $
+# $Id: Makefile,v 1.4 1994/10/27 09:11:28 jak Exp $
 #
 # History:
 # $Log: Makefile,v $
-# Revision 1.3  1994/10/07 06:55:26  jak
+# Revision 1.4  1994/10/27 09:11:28  jak
+# Fixes, including anti-aliasing additions. -jak
+#
+# Revision 1.3  1994/10/07  06:55:26  jak
 # Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
 # be set from the command line!  -jak
 #
@@ -21,13 +24,13 @@
 #
 
 CC=gcc
-CFLAGS=-ggdb3 -O2 -V2.5.8
+CFLAGS=-ggdb -O2 -V2.5.8
 LIBS=-lm -lg++
 
-SOURCES= Makefile main.cc fft.cc TimeFrequency.h TimeFrequency.cc Spectrogram.cc Spectrogram.h sine.c Wigner.cc Wigner.h
-OBJECTS= fft.o Spectrogram.o TimeFrequency.o Wigner.o
+SOURCES= Makefile main.cc fft.cc TimeFrequency.h TimeFrequency.cc Spectrogram.cc Spectrogram.h sine.c Wigner.cc Wigner.h Choi_Williams.cc Choi_Williams.h
+OBJECTS= fft.o Spectrogram.o TimeFrequency.o Wigner.o Choi_Williams.o
 EXES= main
-LINKS= Spectrogram Wigner Choi-Williams
+LINKS= Spectrogram Wigner Choi_Williams
 
 DEPENDOBJ = $(OBJECTS:.o=.d) 
 
@@ -55,7 +58,7 @@ install:
 	cp main $(HOME)/Apps/tfd
 	ln -s ./tfd $(HOME)/Apps/Spectrogram
 	ln -s ./tfd $(HOME)/Apps/Wigner
-	ln -s ./tfd $(HOME)/Apps/Choi-Williams
+	ln -s ./tfd $(HOME)/Apps/Choi_Williams
 
 $(DEPENDOBJ): %.d: %.cc
 	$(SHELL) -ec '$(CC) -M -c $(CFLAGS) $< | sed '\''s/$*.o/& $@/g'\'' > $@'

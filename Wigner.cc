@@ -3,12 +3,15 @@
 //
 // C++ Implementation of Wigner Transform Wigner Object
 //
-//  $Id: Wigner.cc,v 1.2 1994/10/07 06:55:30 jak Exp $
+//  $Id: Wigner.cc,v 1.3 1994/10/27 09:11:31 jak Exp $
 //
 //  Author: John Kassebaum
 //
 // $Log: Wigner.cc,v $
-// Revision 1.2  1994/10/07 06:55:30  jak
+// Revision 1.3  1994/10/27 09:11:31  jak
+// Fixes, including anti-aliasing additions. -jak
+//
+// Revision 1.2  1994/10/07  06:55:30  jak
 // Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
 // be set from the command line!  -jak
 //
@@ -18,7 +21,7 @@
 //
 //
 
-static char rcsid_Wigner_cc[] = "$Id: Wigner.cc,v 1.2 1994/10/07 06:55:30 jak Exp $";
+static char rcsid_Wigner_cc[] = "$Id: Wigner.cc,v 1.3 1994/10/27 09:11:31 jak Exp $";
 
 #include "Wigner.h"
 #include <math.h>
@@ -28,6 +31,7 @@ static char rcsid_Wigner_cc[] = "$Id: Wigner.cc,v 1.2 1994/10/07 06:55:30 jak Ex
 
 #define DEBUG
 #define POSITIVE_F_ONLY
+#define ALIASFREE
 
 #define BLOCKSIZE    1024
 #define Null(A)             ((A *) 0)
@@ -80,9 +84,18 @@ void Wigner::compute()
 		s_offset = i*getWindowStride(); // start of window!
 
 		t1 = i*getWindowStride() + half;
+		
+#ifdef ALIASFREE
+		for( tau = 0; (tau < getWindowSize()) && (t1 - tau/2 >= 0) && (t1 + tau/2 + 1 < signal_length) ; tau += 2 ){
+			temp[ tau ] = conj( signal[ t1 - tau/2 ] ) * signal[ t1 + tau/2 ] ;
+			temp[ tau+1 ] = conj( signal[ t1 - tau/2 ] ) * signal[ t1 + tau/2 + 1] ;
+		}
+#else
 		for( tau = 0; (tau < getWindowSize()) && (t1 - tau >= 0) && (t1 + tau < signal_length) ; tau++ ){
 			temp[ tau ] = conj( signal[ t1 - tau ] ) * signal[ t1 + tau ] ;
 		}
+#endif
+
 		bcopy((char *)temp, (char *)spectrogram[i], (getWindowSize() * sizeof( Complex )));
 
 	  //
@@ -97,7 +110,7 @@ void Wigner::compute()
 #endif
 	}
 #ifdef DEBUG
-    fprintf(stderr, "\nDone With STFTs!\n");
+    fprintf(stderr, "\nDone With Wigner Distributions!\n");
 #endif
 	
 	isComputed = 1;
@@ -112,16 +125,22 @@ void Wigner:: print_Gnuplot()
   length = (float) getWindowSize() / 2.0;
 #else
   length = (float) getWindowSize(); // 2.0;
-#endif
+#endif // POSITIVE_F_ONLY
 
   if((status = fwrite((char*)&length, sizeof(float), 1, stdout))!=1){
     fprintf(stderr,"Spectrogram:: print_Gnuplot() - fwrite 1 returned %d\n",status);
     abort();
   }
   
+#ifdef ALIASFREE
+  for( cnt = 0.0; cnt < getBandWidth()/2.0; cnt += getFrequencyResolution()){
+      fwrite((char*)&cnt, sizeof(float), 1, stdout);
+  }
+#else
   for( cnt = 0.0; cnt < getBandWidth()/4.0; cnt += getFrequencyResolution()/2.0){
       fwrite((char*)&cnt, sizeof(float), 1, stdout);
   }
+#endif
 
 #ifndef POSITIVE_F_ONLY
   for( cnt = -getBandWidth()/4.0; cnt < 0.0; cnt += getFrequencyResolution()/2.0){
