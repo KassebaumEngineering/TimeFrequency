@@ -3,16 +3,17 @@
 //  fft.cc  a simple radix 2, in-place fft, and inv_fft
 //  also includes simple data windows.
 //
-//  $Id: fft.cc,v 1.1 1994/10/04 07:21:04 jak Exp $
+//  $Id: fft.cc,v 1.1.1.1 1994/10/04 07:21:05 jak Exp $
 //
 //
 // History:
 /* $Log: fft.cc,v $
-/* Revision 1.1  1994/10/04 07:21:04  jak
-/* Initial revision
+/* Revision 1.1.1.1  1994/10/04 07:21:05  jak
+/* Placing Time/Frequency Code under CVS control.  Only Spectrogram
+/* works currently.  -jak
 /**/
  
-static char rcsid_fft_cc[] = "$Id: fft.cc,v 1.1 1994/10/04 07:21:04 jak Exp $";
+static char rcsid_fft_cc[] = "$Id: fft.cc,v 1.1.1.1 1994/10/04 07:21:05 jak Exp $";
  
 #include <math.h>
 #include <Complex.h>

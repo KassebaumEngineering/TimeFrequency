@@ -3,16 +3,17 @@
 //
 // C++ Implementation of TimeFrequency Object
 //
-//  $Id: TimeFrequency.cc,v 1.1 1994/10/04 07:21:04 jak Exp $
+//  $Id: TimeFrequency.cc,v 1.1.1.1 1994/10/04 07:21:05 jak Exp $
 //
 //  Author: John Kassebaum
 //
 /* $Log: TimeFrequency.cc,v $
-/* Revision 1.1  1994/10/04 07:21:04  jak
-/* Initial revision
+/* Revision 1.1.1.1  1994/10/04 07:21:05  jak
+/* Placing Time/Frequency Code under CVS control.  Only Spectrogram
+/* works currently.  -jak
 /**/
 
-static char rcsid_TimeFrequency_cc[] = "$Id: TimeFrequency.cc,v 1.1 1994/10/04 07:21:04 jak Exp $";
+static char rcsid_TimeFrequency_cc[] = "$Id: TimeFrequency.cc,v 1.1.1.1 1994/10/04 07:21:05 jak Exp $";
 
 #include "TimeFrequency.h"
 #include <math.h>

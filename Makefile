@@ -1,12 +1,13 @@
 #
 # Makefile for Spectral Analysis Tools
 # 
-# $Id: Makefile,v 1.1 1994/10/04 07:21:04 jak Exp $
+# $Id: Makefile,v 1.1.1.1 1994/10/04 07:21:05 jak Exp $
 #
 # History:
 # $Log: Makefile,v $
-# Revision 1.1  1994/10/04 07:21:04  jak
-# Initial revision
+# Revision 1.1.1.1  1994/10/04 07:21:05  jak
+# Placing Time/Frequency Code under CVS control.  Only Spectrogram
+# works currently.  -jak
 #
 #
 #

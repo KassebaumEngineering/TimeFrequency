@@ -3,18 +3,19 @@
 //
 // C++ Main Program for Calculating Data Distributions 
 //
-//  $Id: main.cc,v 1.1 1994/10/04 07:21:04 jak Exp $
+//  $Id: main.cc,v 1.1.1.1 1994/10/04 07:21:05 jak Exp $
 //
 //  Author: John Kassebaum
 //
 // $Log: main.cc,v $
-// Revision 1.1  1994/10/04 07:21:04  jak
-// Initial revision
+// Revision 1.1.1.1  1994/10/04 07:21:05  jak
+// Placing Time/Frequency Code under CVS control.  Only Spectrogram
+// works currently.  -jak
 //
 //
 //
 
-static char rcsid_main_cc[] = "$Id: main.cc,v 1.1 1994/10/04 07:21:04 jak Exp $";
+static char rcsid_main_cc[] = "$Id: main.cc,v 1.1.1.1 1994/10/04 07:21:05 jak Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
