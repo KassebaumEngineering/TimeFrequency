@@ -3,18 +3,21 @@
 //
 // C++ Implementation of Choi_Williams Transform Object
 //
-//  $Id: Choi_Williams.cc,v 1.1 1994/10/27 09:12:37 jak Exp $
+//  $Id: Choi_Williams.cc,v 1.2 1994/11/18 05:52:47 jak Exp $
 //
 //  Author: John Kassebaum
 //
 // $Log: Choi_Williams.cc,v $
-// Revision 1.1  1994/10/27 09:12:37  jak
+// Revision 1.2  1994/11/18 05:52:47  jak
+// Small changes to improve Choi_Williams operations. -jak
+//
+// Revision 1.1  1994/10/27  09:12:37  jak
 // Checking in first working anti-aliased Choi-Williams Distribution TFD -jak
 //
 //
 //
 
-static char rcsid_Choi_Williams_cc[] = "$Id: Choi_Williams.cc,v 1.1 1994/10/27 09:12:37 jak Exp $";
+static char rcsid_Choi_Williams_cc[] = "$Id: Choi_Williams.cc,v 1.2 1994/11/18 05:52:47 jak Exp $";
 
 #include "Choi_Williams.h"
 #include <math.h>
@@ -89,16 +92,10 @@ void Choi_Williams::compute()
 				if (dist == 0.0) dist = 0.5;
 				variance = 2.0 * (double) (( j - NumberOfCols/2 -1) * ( j - NumberOfCols/2 -1)) / sigma;
 	            if( variance != 0.0 ) 
-				    CW_Kernel[i][j] =  exp(-dist * variance);//erfc( dist / variance ); 
+				    CW_Kernel[i][j] =  exp(-dist * variance); 
 				else 
 				    CW_Kernel[NumberOfRows/2][j] = 1.0;
-                
-                //if( i%2 ) {
-                //    if( !(j%2) ) CW_Kernel[i][j] = 0.0;
-                //} else {
-                //    if( j%2 ) CW_Kernel[i][j] = 0.0;
-                //}
-			}
+   			}
         }
 
 //--------------------

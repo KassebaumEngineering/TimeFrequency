@@ -3,12 +3,15 @@
 //
 // C++ Main Program for Calculating Data Distributions 
 //
-//  $Id: main.cc,v 1.4 1994/10/27 09:11:34 jak Exp $
+//  $Id: main.cc,v 1.5 1994/11/18 05:52:48 jak Exp $
 //
 //  Author: John Kassebaum
 //
 // $Log: main.cc,v $
-// Revision 1.4  1994/10/27 09:11:34  jak
+// Revision 1.5  1994/11/18 05:52:48  jak
+// Small changes to improve Choi_Williams operations. -jak
+//
+// Revision 1.4  1994/10/27  09:11:34  jak
 // Fixes, including anti-aliasing additions. -jak
 //
 // Revision 1.3  1994/10/07  06:55:33  jak
@@ -26,7 +29,7 @@
 //
 //
 
-static char rcsid_main_cc[] = "$Id: main.cc,v 1.4 1994/10/27 09:11:34 jak Exp $";
+static char rcsid_main_cc[] = "$Id: main.cc,v 1.5 1994/11/18 05:52:48 jak Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,12 +55,13 @@ static char rcsid_main_cc[] = "$Id: main.cc,v 1.4 1994/10/27 09:11:34 jak Exp $"
 #define DESCR_7    " -bi           set input file type to binary (float)\n"
 #define DESCR_8    " -bo           set output file type to binary (float)\n"
 #define DESCR_9    " -no           request no output\n"
-#define DESCR_10    " -d <string>   set distribution type (default FFT)\n"
-#define DESCR_10_1  "    choices: FFT, Wigner, Choi_Williams, None\n"
-#define DESCR_11   "\n data_file  -  A file of floating point numbers\n"
-#define DESCR_12   "(default) in ascii format, with one number per line. \n "
-#define DESCR_13   "example:\n"
-#define DESCR_14   " -47.52\n -39.59\n -27.72\n -15.84\n"
+#define DESCR_10   " -d <string>   set distribution type (default FFT)\n"
+#define DESCR_10_1 "    choices: FFT, Wigner, Choi_Williams, None\n"
+#define DESCR_11   " -sigma <float>    set sigma value (useful for Choi_WIlliams only)\n"
+#define DESCR_12   "\n data_file  -  A file of floating point numbers\n"
+#define DESCR_13   "(default) in ascii format, with one number per line. \n "
+#define DESCR_14   "example:\n"
+#define DESCR_15   " -47.52\n -39.59\n -27.72\n -15.84\n"
 //
 // ------------------------------------------------------------------------
 //
@@ -84,7 +88,7 @@ main(int argc,char **argv)
     int c,i,j,k;
     int verbose, stats, flag;
 	int window_width, stride, binary_input, binary_output, no_output;
-	float sampling_rate;
+	float sampling_rate, sigma;
 	TFD  chosen_distribution;
     long int data_count;
     long int space_alloc;
@@ -104,6 +108,7 @@ main(int argc,char **argv)
 	no_output = 0;
 	sampling_rate = DEFAULT_SAMPLING_RATE;
 	chosen_distribution = STFT;
+    sigma = window_width*window_width;
 	
   //
   // Special Check for program name - may assign default distribution type
@@ -140,6 +145,7 @@ main(int argc,char **argv)
             fprintf(stderr,DESCR_12);
             fprintf(stderr,DESCR_13);
             fprintf(stderr,DESCR_14);
+            fprintf(stderr,DESCR_15);
             exit(0);
         } else if (!strcmp( argv[ c ],"-v")){
             verbose = 1;
@@ -154,6 +160,9 @@ main(int argc,char **argv)
         } else if (!strcmp( argv[ c ],"-r")){
 		    c++;
 			sampling_rate = atof( argv[ c ] );
+        } else if (!strcmp( argv[ c ],"-sigma")){
+		    c++;
+			sigma = atof( argv[ c ] );
         } else if (!strcmp( argv[ c ],"-bi")){
 			binary_input = 1;
         } else if (!strcmp( argv[ c ],"-bo")){
@@ -336,11 +345,12 @@ main(int argc,char **argv)
 				myCW.setSamplingFrequency( sampling_rate );
 				myCW.setWindowSize( window_width );
 				myCW.setWindowStride( stride );
-				myCW.setSigma( window_width*window_width );
+				myCW.setSigma( sigma );
 				if (stats) {
 					fprintf(stderr, "Sampling Frequency %f => %f Hz.\n", sampling_rate,  myCW.getSamplingFrequency());
 					fprintf(stderr, "Window Width %d => %d samples.\n", window_width, myCW.getWindowSize());
 					fprintf(stderr, "Window Stride %d => %d samples.\n", stride, myCW.getWindowStride());
+					fprintf(stderr, "Sigma => %f \n", myCW.getSigma());
 					fprintf(stderr, "Time Slots = %d \n", myCW.getTimeSlots());
 					fprintf(stderr, "Spectrum Data length = %d \n", myCW.getSpectrumDataLength());
  				}
