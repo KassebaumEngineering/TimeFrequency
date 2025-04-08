@@ -8,11 +8,11 @@
 //
 // History:
 /* $Log: fft.cc,v $
-/* Revision 1.1  1994/10/04 07:21:04  jak
-/* Initial revision
-/**/
+ * Revision 1.1  1994/10/04 07:21:04  jak
+ * Initial revision
+ */
  
-static char rcsid_fft_cc[] = "$Id: fft.cc,v 1.1 1994/10/04 07:21:04 jak Exp $";
+[[maybe_unused]] static char rcsid_fft_cc[] = "$Id: fft.cc,v 1.1 1994/10/04 07:21:04 jak Exp $";
  
 #include <cmath>
 #include <complex>
@@ -25,8 +25,8 @@ using Complex = std::complex<double>;
 
 void fft( Complex *a, int N ) // ----> N MUST be a power of 2 !
 {
-    int i, j, k, l, le, le1, tst;
-    int nv2, nm1, ip;
+    int i, j, k, le, le1;
+    int nv2, ip;
 	Complex t, u, w;
 	
 #ifdef DEBUG
@@ -86,7 +86,7 @@ void fft( Complex *a, int N ) // ----> N MUST be a power of 2 !
 
 void inv_fft(Complex *a, int N) // ----> N MUST be a power of 2 !
 {
-    int i, j;
+    int i;
 
 #ifdef DEBUG
     {

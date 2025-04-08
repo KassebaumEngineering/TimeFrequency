@@ -29,7 +29,7 @@
 //
 //
 
-static char rcsid_main_cc[] = "$Id: main.cc,v 1.5 1994/11/18 05:52:48 jak Exp $";
+[[maybe_unused]] static char rcsid_main_cc[] = "$Id: main.cc,v 1.5 1994/11/18 05:52:48 jak Exp $";
 
 #include <cstdio>
 #include <cstdlib>
@@ -52,7 +52,7 @@ static char rcsid_main_cc[] = "$Id: main.cc,v 1.5 1994/11/18 05:52:48 jak Exp $"
 #define DESCR_4_1  "   (default %d samples)\n"
 #define DESCR_5    " -ss <int>     set spectrum spacing (in samples)\n"
 #define DESCR_6    " -r  <float>   set sampling frequency value (in Hz)\n"
-#define DESCR_6_1  "   (default %d Hz)\n"
+#define DESCR_6_1  "   (default %f Hz)\n"
 #define DESCR_7    " -bi           set input file type to binary (float)\n"
 #define DESCR_8    " -bo           set output file type to binary (float)\n"
 #define DESCR_9    " -no           request no output\n"
@@ -86,7 +86,7 @@ enum TFD {
 
 int main(int argc,char **argv)
 {
-    int c,i,j,k;
+    int c,i;
     int verbose, stats, flag;
 	int window_width, stride, binary_input, binary_output, no_output;
 	float sampling_rate, sigma;
@@ -94,11 +94,8 @@ int main(int argc,char **argv)
     long int data_count;
     long int space_alloc;
     float min_value, max_value;
-    double tempf;
-    int step_count;
-    float step;
     float *data;
-    float *output_data;
+    float *output_data = nullptr;
 
     verbose = 0;
     stats = 0;
@@ -192,7 +189,7 @@ int main(int argc,char **argv)
     space_alloc = 0;
     data = (float *)0;
     
-    if( data = NewBlock( float, BLOCKSIZE ) ){
+    if( (data = NewBlock( float, BLOCKSIZE )) ){
         space_alloc = BLOCKSIZE;
     } else {
         perror(argv[0]);
@@ -214,7 +211,7 @@ int main(int argc,char **argv)
 		{
 		    data_count += ( bytes_read / sizeof(float) );
 			if( (block_size = (space_alloc - data_count)) < 1) {
-				if( data = BiggerBlock( float, data, (space_alloc + BLOCKSIZE) ) ){
+				if( (data = BiggerBlock( float, data, (space_alloc + BLOCKSIZE) )) ){
 					space_alloc += BLOCKSIZE;
 					block_size = space_alloc - data_count;
 				} else {
@@ -269,7 +266,7 @@ int main(int argc,char **argv)
 			if (verbose) fprintf(stdout, "%f\n", data[ data_count ]);
 			data_count++;
 			if ( data_count >= space_alloc ){
-				if( data = BiggerBlock( float, data, (space_alloc + BLOCKSIZE) ) ){
+				if( (data = BiggerBlock( float, data, (space_alloc + BLOCKSIZE) )) ){
 					space_alloc += BLOCKSIZE;
 				} else {
 					perror(argv[0]);
@@ -280,8 +277,8 @@ int main(int argc,char **argv)
 	}
     
     if (stats) {
-        fprintf(stderr, "Space Allocated for %d floats.\n", space_alloc);
-        fprintf(stderr, "Space Used for %d floats.\n", data_count);
+        fprintf(stderr, "Space Allocated for %ld floats.\n", space_alloc);
+        fprintf(stderr, "Space Used for %ld floats.\n", data_count);
         fprintf(stderr, "Minimum value = %f.\n", min_value);
         fprintf(stderr, "Maximum value = %f.\n", max_value);
     }
@@ -291,7 +288,8 @@ int main(int argc,char **argv)
 	//
         switch( chosen_distribution ) {
 		    case STFT: {
-			    Spectrogram mySpectrogram;
+		              { // Add extra scope
+		     Spectrogram mySpectrogram;
 				
 			    //fprintf(stderr,"Call to STFT\n");
 				no_output = 1;
@@ -311,10 +309,12 @@ int main(int argc,char **argv)
                 //mySpectrogram.print_Mathematica();
                 mySpectrogram.print_Gnuplot();
 				
+				} // Close extra scope
 				break;
 			}
 		    case WT: {
-			    Wigner myWigner;
+		              { // Add extra scope
+		     Wigner myWigner;
 			
 			    fprintf(stderr,"Call to WT\n");
 				no_output = 1;
@@ -334,10 +334,12 @@ int main(int argc,char **argv)
                 //myWigner.print_Mathematica();
                 myWigner.print_Gnuplot();
 				
+				} // Close extra scope
 				break;
 			}
 		    case CWD:{
-			    Choi_Williams myCW;
+		              { // Add extra scope
+		     Choi_Williams myCW;
 
 			    fprintf(stderr,"Call to CWD\n");
 				no_output = 1;
@@ -359,12 +361,23 @@ int main(int argc,char **argv)
                 //myCW.print_Mathematica();
                 myCW.print_Gnuplot();
 
+				} // Close extra scope
 				break;
-            }
+				        }
 		    case NONE:
 			    fprintf(stderr,"No Distribution Calculated.\n");
 		        output_data = data;
 		        break;
+		          case NA:
+		              // This case should ideally not be reached due to argument parsing checks
+		              fprintf(stderr, "Error: Invalid distribution type (NA) encountered in switch.\n");
+		              // Consider aborting or handling appropriately if this state is possible
+		              abort(); // Or handle error gracefully
+		              break;
+		          default:
+		              // Should not happen due to earlier checks, but handles potential unknown enum values
+		              fprintf(stderr, "Warning: Unknown or unhandled distribution type in switch.\n");
+		              break;
 		}
 	//
 	// ---------------------------------------------------------------------------------

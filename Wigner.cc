@@ -21,14 +21,15 @@
 //
 //
 
-static char rcsid_Wigner_cc[] = "$Id: Wigner.cc,v 1.3 1994/10/27 09:11:31 jak Exp $";
+[[maybe_unused]] static char rcsid_Wigner_cc[] = "$Id: Wigner.cc,v 1.3 1994/10/27 09:11:31 jak Exp $";
 
 #include "Wigner.h"
 #include <cmath>
 #include <complex>
 #include <cstdlib>
 #include <cstdio>
-
+#include <vector>
+#include <cstring> // For memcpy
 using Complex = std::complex<double>;
 
 #define DEBUG
@@ -61,7 +62,7 @@ Wigner:: ~Wigner()
 
 void Wigner::compute()
 {
-    int i,j;
+    int i; // Removed unused j
 	
 	if( getSpectrumDataLength() == 0 ) {
 	    setWindowStride( getWindowSize() / 2 );
@@ -73,8 +74,8 @@ void Wigner::compute()
     fprintf(stderr, "Computing Wigner Transform of Analytic Signal\n");
 #endif
 	for( i=0; i< time_slots; i++){
-		int tau, t1, t2, half, s_offset;
-        Complex temp[ getWindowSize() ];
+		int tau, t1, half; // Removed unused t2
+		      std::vector<Complex> temp(getWindowSize());
 
 	  //
 	  // Wigner Weighting of Signal
@@ -83,7 +84,7 @@ void Wigner::compute()
     fprintf(stderr, "W");
 #endif
 		half = ( getWindowSize() >> 1 );
-		s_offset = i*getWindowStride(); // start of window!
+		// int s_offset = i*getWindowStride(); // start of window! (Unused)
 
 		t1 = i*getWindowStride() + half;
 		
@@ -98,7 +99,7 @@ void Wigner::compute()
 		}
 #endif
 
-		bcopy((char *)temp, (char *)spectrogram[i], (getWindowSize() * sizeof( Complex )));
+		memcpy(spectrogram[i], temp.data(), getWindowSize() * sizeof(Complex));
 
 	  //
 	  // Perform FFT

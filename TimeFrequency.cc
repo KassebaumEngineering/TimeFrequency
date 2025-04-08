@@ -8,16 +8,16 @@
 //  Author: John Kassebaum
 //
 /* $Log: TimeFrequency.cc,v $
-/* Revision 1.2  1994/10/07 06:55:29  jak
-/* Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
-/* be set from the command line!  -jak
-/*
+ * Revision 1.2  1994/10/07 06:55:29  jak
+ * Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
+ * be set from the command line!  -jak
+ *
 // Revision 1.1.1.1  1994/10/04  07:21:05  jak
 // Placing Time/Frequency Code under CVS control.  Only Spectrogram
 // works currently.  -jak
 //*/
 
-static char rcsid_TimeFrequency_cc[] = "$Id: TimeFrequency.cc,v 1.2 1994/10/07 06:55:29 jak Exp $";
+[[maybe_unused]] static char rcsid_TimeFrequency_cc[] = "$Id: TimeFrequency.cc,v 1.2 1994/10/07 06:55:29 jak Exp $";
 
 #include "TimeFrequency.h"
 #include <cmath>
@@ -43,7 +43,7 @@ using Complex = std::complex<double>;
 // Constructor
 //
 
-TimeFrequency:: TimeFrequency(): myWindow( Rectangular ), window_size( DEFAULT_WSIZE ), stride( DEFAULT_WSIZE/2), signal(0), sampling_frequency(1.0), isAnalytic(0)
+TimeFrequency:: TimeFrequency(): myWindow( Rectangular ), window_size( DEFAULT_WSIZE ), stride( DEFAULT_WSIZE/2), sampling_frequency(1.0), signal(0), isAnalytic(0)
 {
 	frequency_band       = (sampling_frequency);              // ( in Hz ) see Nyquist
 	   frequency_resolution = (frequency_band / static_cast<double>(window_size));  // ( in Hz per sample )
@@ -91,8 +91,8 @@ void TimeFrequency::setDataSignal( double *data, int n_items )
 
 int TimeFrequency::setWindowSize( unsigned short asize )
 {
-	short mask, bitcount, the_size;
-    int i, flag, cnt, rtn;
+	short mask, bitcount, the_size = 0;
+	   int cnt, rtn;
 
 	mask = asize;
     bitcount = 0;
@@ -206,7 +206,7 @@ void TimeFrequency::makeAnalytic()
 
 int    TimeFrequency:: setFrequencyResolution( double delta_freq )
 {
-    double wsize, dfreq;
+    double wsize;
 	int i, flag, rtn;;
 	
     wsize = ( frequency_band / delta_freq );

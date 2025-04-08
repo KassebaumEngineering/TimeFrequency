@@ -8,9 +8,9 @@
 //  Author: John Kassebaum
 //
 /* $Log: Wigner.h,v $
-/* Revision 1.3  1994/10/27 09:11:33  jak
-/* Fixes, including anti-aliasing additions. -jak
-/*
+ * Revision 1.3  1994/10/27 09:11:33  jak
+ * Fixes, including anti-aliasing additions. -jak
+ *
  * Revision 1.2  1994/10/07  06:55:32  jak
  * Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
  * be set from the command line!  -jak

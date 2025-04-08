@@ -8,10 +8,10 @@
 //  Author: John Kassebaum
 //
 /* $Log: Spectrogram.cc,v $
-/* Revision 1.3  1994/10/07 06:55:28  jak
-/* Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
-/* be set from the command line!  -jak
-/*
+ * Revision 1.3  1994/10/07 06:55:28  jak
+ * Wigner now works!  Bug fixes to the Spectrogram also.  Stride can now
+ * be set from the command line!  -jak
+ *
 // Revision 1.2  1994/10/06  17:51:55  jak
 // Made Fixes to several of the spectrum programs - have a preliminary version
 // of the Wigner distribution. -jak
@@ -21,7 +21,7 @@
 // works currently.  -jak
 //*/
 
-static char rcsid_Spectrogram_cc[] = "$Id: Spectrogram.cc,v 1.3 1994/10/07 06:55:28 jak Exp $";
+[[maybe_unused]] static char rcsid_Spectrogram_cc[] = "$Id: Spectrogram.cc,v 1.3 1994/10/07 06:55:28 jak Exp $";
 
 #include "Spectrogram.h"
 #include <cmath>
@@ -44,7 +44,7 @@ using Complex = std::complex<double>;
 // Constructor
 //
 
-Spectrogram:: Spectrogram(): TimeFrequency(), spectrogram(0), time_slots(0),  isComputed(0)
+Spectrogram:: Spectrogram(): TimeFrequency(), time_slots(0), spectrogram(0), isComputed(0)
 {
     ;
 };
@@ -60,7 +60,7 @@ Spectrogram:: ~Spectrogram()
 
 void Spectrogram:: setWindowStride( unsigned short astride )
 {
-    int spectrogram_size, i; 
+    int i;
 	double ratio;
 	
 	TimeFrequency::setWindowStride( astride );

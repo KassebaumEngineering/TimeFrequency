@@ -8,9 +8,9 @@
 //  Author: John Kassebaum
 //
 /* $Log: Spectrogram.h,v $
-/* Revision 1.3  1994/10/27 09:11:30  jak
-/* Fixes, including anti-aliasing additions. -jak
-/*
+ * Revision 1.3  1994/10/27 09:11:30  jak
+ * Fixes, including anti-aliasing additions. -jak
+ *
  * Revision 1.2  1994/10/06  17:51:56  jak
  * Made Fixes to several of the spectrum programs - have a preliminary version
  * of the Wigner distribution. -jak

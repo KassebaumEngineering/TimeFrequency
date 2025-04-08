@@ -17,7 +17,7 @@
 //
 //
 
-static char rcsid_Choi_Williams_cc[] = "$Id: Choi_Williams.cc,v 1.2 1994/11/18 05:52:47 jak Exp $";
+[[maybe_unused]] static char rcsid_Choi_Williams_cc[] = "$Id: Choi_Williams.cc,v 1.2 1994/11/18 05:52:47 jak Exp $";
 
 #include "Choi_Williams.h"
 #include <cmath>
@@ -154,11 +154,11 @@ void Choi_Williams::compute()
     fprintf(stderr, "Computing Choi_Williams Transform of Analytic Signal\n");
 #endif
 	for( i=0; i< time_slots; i++){
-	    int tau, mu, t1, t2, t, half, s_offset;
+	    int tau, mu, half, s_offset; // Removed unused t1, t2, t
 
 		half = ( getWindowSize() >> 1 );
 		s_offset = i*getWindowStride(); // start of window!
-		t = i*getWindowStride() + half;
+		// t = i*getWindowStride() + half; // Removed unused variable t
 
 #ifdef DEBUG
     fprintf(stderr, "O");
@@ -171,7 +171,7 @@ void Choi_Williams::compute()
             for( tau = 0; (tau < (half<<1)-1) ; tau+=2 ){
                 int tau_over_2 = tau >> 1;
                 int mu_plus_t = mu + s_offset + half/2;
-                int t_minus_mu =  t - mu;
+                // int t_minus_mu =  t - mu; // Unused variable
                 //int row = mu + half/2;
                 int row = mu;
                 if( mu_plus_t - tau_over_2 < 0 ) {

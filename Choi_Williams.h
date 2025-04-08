@@ -8,9 +8,10 @@
 //  Author: John Kassebaum
 //
 /* $Log: Choi_Williams.h,v $
-/* Revision 1.1  1994/10/27 09:12:39  jak
-/* Checking in first working anti-aliased Choi-Williams Distribution TFD -jak
-/**/
+ * Revision 1.1  1994/10/27 09:12:39  jak
+ * Checking in first working anti-aliased Choi-Williams Distribution TFD -jak
+ *
+ */
 
 #ifndef _Choi_Williams_h
 #define _Choi_Williams_h
