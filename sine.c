@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 
-main()
+int main(void)
 {
     int i,j;
     double value;
@@ -12,4 +12,5 @@ main()
         value += sin( 2*M_PI*i/10.0 );
         printf("%f\n", (float) value );
     }
+    return 0;
 }

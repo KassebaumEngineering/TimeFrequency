@@ -24,20 +24,22 @@
 static char rcsid_Wigner_cc[] = "$Id: Wigner.cc,v 1.3 1994/10/27 09:11:31 jak Exp $";
 
 #include "Wigner.h"
-#include <math.h>
-#include <Complex.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cmath>
+#include <complex>
+#include <cstdlib>
+#include <cstdio>
+
+using Complex = std::complex<double>;
 
 #define DEBUG
 #define POSITIVE_F_ONLY
 #define ALIASFREE
 
 #define BLOCKSIZE    1024
-#define Null(A)             ((A *) 0)
-#define New(A)              ((A *) malloc( sizeof(A) ) )
-#define NewBlock(A,N)       ((A *) malloc( sizeof(A) * (N)) )
-#define BiggerBlock(A,B,N)  ((A *) realloc( (void *)(B), sizeof(A) * (N)))
+#define Null(A)             (static_cast<A *>(nullptr))
+#define New(A)              (static_cast<A *>(malloc(sizeof(A))))
+#define NewBlock(A,N)       (static_cast<A *>(malloc(sizeof(A) * (N))))
+#define BiggerBlock(A,B,N)  (static_cast<A *>(realloc(static_cast<void *>(B), sizeof(A) * (N))))
 
 //
 // Constructor
@@ -87,12 +89,12 @@ void Wigner::compute()
 		
 #ifdef ALIASFREE
 		for( tau = 0; (tau < getWindowSize()) && (t1 - tau/2 >= 0) && (t1 + tau/2 + 1 < signal_length) ; tau += 2 ){
-			temp[ tau ] = conj( signal[ t1 - tau/2 ] ) * signal[ t1 + tau/2 ] ;
-			temp[ tau+1 ] = conj( signal[ t1 - tau/2 ] ) * signal[ t1 + tau/2 + 1] ;
+			temp[ tau ] = std::conj( signal[ t1 - tau/2 ] ) * signal[ t1 + tau/2 ] ;
+			temp[ tau+1 ] = std::conj( signal[ t1 - tau/2 ] ) * signal[ t1 + tau/2 + 1] ;
 		}
 #else
 		for( tau = 0; (tau < getWindowSize()) && (t1 - tau >= 0) && (t1 + tau < signal_length) ; tau++ ){
-			temp[ tau ] = conj( signal[ t1 - tau ] ) * signal[ t1 + tau ] ;
+			temp[ tau ] = std::conj( signal[ t1 - tau ] ) * signal[ t1 + tau ] ;
 		}
 #endif
 
@@ -118,13 +120,13 @@ void Wigner::compute()
 
 void Wigner:: print_Gnuplot()
 {
-  register int i,j, status;
+  int i,j, status;
   float length, cnt, temp;
 
 #ifdef POSITIVE_F_ONLY
-  length = (float) getWindowSize() / 2.0;
+  length = static_cast<float>(getWindowSize()) / 2.0;
 #else
-  length = (float) getWindowSize(); // 2.0;
+  length = static_cast<float>(getWindowSize()); // 2.0;
 #endif // POSITIVE_F_ONLY
 
   if((status = fwrite((char*)&length, sizeof(float), 1, stdout))!=1){

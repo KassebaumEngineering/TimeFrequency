@@ -19,7 +19,6 @@ static char rcsid_Choi_Williams_h[] = "$Id: Choi_Williams.h,v 1.1 1994/10/27 09:
 
 #include "Wigner.h"
 
-class Complex;
 
 class Choi_Williams : public Wigner {
 public:

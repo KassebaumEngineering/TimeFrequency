@@ -31,9 +31,10 @@
 
 static char rcsid_main_cc[] = "$Id: main.cc,v 1.5 1994/11/18 05:52:48 jak Exp $";
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <unistd.h>
 
 #include "Spectrogram.h"
 #include "Wigner.h"
@@ -78,12 +79,12 @@ enum TFD {
 }; 
 
 #define BLOCKSIZE    1024
-#define Null(A)             ((A *) 0)
-#define New(A)              ((A *) malloc( sizeof(A) ) )
-#define NewBlock(A,N)       ((A *) malloc( sizeof(A) * (N)) )
-#define BiggerBlock(A,B,N)  ((A *) realloc( (void *)(B), sizeof(A) * (N)))
+#define Null(A)             (static_cast<A *>(nullptr))
+#define New(A)              (static_cast<A *>(malloc(sizeof(A))))
+#define NewBlock(A,N)       (static_cast<A *>(malloc(sizeof(A) * (N))))
+#define BiggerBlock(A,B,N)  (static_cast<A *>(realloc(static_cast<void *>(B), sizeof(A) * (N))))
 
-main(int argc,char **argv)
+int main(int argc,char **argv)
 {
     int c,i,j,k;
     int verbose, stats, flag;

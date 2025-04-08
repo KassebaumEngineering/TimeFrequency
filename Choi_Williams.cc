@@ -20,18 +20,20 @@
 static char rcsid_Choi_Williams_cc[] = "$Id: Choi_Williams.cc,v 1.2 1994/11/18 05:52:47 jak Exp $";
 
 #include "Choi_Williams.h"
-#include <math.h>
-#include <Complex.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cmath>
+#include <complex>
+#include <cstdlib>
+#include <cstdio>
+using Complex = std::complex<double>;
+
 
 #define DEBUG
 
 #define BLOCKSIZE    1024
-#define Null(A)             ((A *) 0)
-#define New(A)              ((A *) malloc( sizeof(A) ) )
-#define NewBlock(A,N)       ((A *) malloc( sizeof(A) * (N)) )
-#define BiggerBlock(A,B,N)  ((A *) realloc( (void *)(B), sizeof(A) * (N)))
+#define Null(A)             (static_cast<A *>(nullptr))
+#define New(A)              (static_cast<A *>(malloc(sizeof(A))))
+#define NewBlock(A,N)       (static_cast<A *>(malloc(sizeof(A) * (N))))
+#define BiggerBlock(A,B,N)  (static_cast<A *>(realloc(static_cast<void *>(B), sizeof(A) * (N))))
 
 //
 // Constructor
@@ -167,11 +169,11 @@ void Choi_Williams::compute()
         //for( mu = -half/2; mu < half/2 ; mu++ ){
         for( mu = 0; mu < half ; mu++ ){
             for( tau = 0; (tau < (half<<1)-1) ; tau+=2 ){
-                register int tau_over_2 = tau >> 1;
-                register int mu_plus_t = mu + s_offset + half/2;
-                register int t_minus_mu =  t - mu;
-                //register int row = mu + half/2;
-                register int row = mu;
+                int tau_over_2 = tau >> 1;
+                int mu_plus_t = mu + s_offset + half/2;
+                int t_minus_mu =  t - mu;
+                //int row = mu + half/2;
+                int row = mu;
                 if( mu_plus_t - tau_over_2 < 0 ) {
                 //if( t_minus_mu - tau_over_2 < 0 ) {
                     temp[row][tau]   = 0;
@@ -181,11 +183,11 @@ void Choi_Williams::compute()
                     if ( mu_plus_t + tau_over_2 >= signal_length)
                         temp[row][tau] = 0;
                     else
-                        temp[row][tau] = conj( signal[ mu_plus_t - tau_over_2] ) * signal[ mu_plus_t + tau_over_2];
+                        temp[row][tau] = std::conj( signal[ mu_plus_t - tau_over_2] ) * signal[ mu_plus_t + tau_over_2];
                         //temp[row][tau] = conj( signal[ t_minus_mu - tau_over_2] ) * signal[ mu_plus_t + tau_over_2];
                 } else {
-                    temp[row][tau]   = conj( signal[ mu_plus_t - tau_over_2] ) * signal[ mu_plus_t + tau_over_2];
-                    temp[row][tau+1] = conj( signal[ mu_plus_t - tau_over_2] ) * signal[ mu_plus_t + tau_over_2 + 1];
+                    temp[row][tau]   = std::conj( signal[ mu_plus_t - tau_over_2] ) * signal[ mu_plus_t + tau_over_2];
+                    temp[row][tau+1] = std::conj( signal[ mu_plus_t - tau_over_2] ) * signal[ mu_plus_t + tau_over_2 + 1];
                     //temp[row][tau]   = conj( signal[ t_minus_mu - tau_over_2] ) * signal[ mu_plus_t + tau_over_2];
                     //temp[row][tau+1] = conj( signal[ t_minus_mu - tau_over_2] ) * signal[ mu_plus_t + tau_over_2 + 1];
                 }

@@ -24,19 +24,21 @@
 static char rcsid_Spectrogram_cc[] = "$Id: Spectrogram.cc,v 1.3 1994/10/07 06:55:28 jak Exp $";
 
 #include "Spectrogram.h"
-#include <math.h>
-#include <Complex.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cmath>
+#include <complex>
+#include <cstdlib>
+#include <cstdio>
+
+using Complex = std::complex<double>;
 
 #define DEBUG
 #define POSITIVE_F_ONLY
 
 #define BLOCKSIZE    1024
-#define Null(A)             ((A *) 0)
-#define New(A)              ((A *) malloc( sizeof(A) ) )
-#define NewBlock(A,N)       ((A *) malloc( sizeof(A) * (N)) )
-#define BiggerBlock(A,B,N)  ((A *) realloc( (void *)(B), sizeof(A) * (N)))
+#define Null(A)             (static_cast<A *>(nullptr))
+#define New(A)              (static_cast<A *>(malloc(sizeof(A))))
+#define NewBlock(A,N)       (static_cast<A *>(malloc(sizeof(A) * (N))))
+#define BiggerBlock(A,B,N)  (static_cast<A *>(realloc(static_cast<void *>(B), sizeof(A) * (N))))
 
 //
 // Constructor
@@ -64,12 +66,12 @@ void Spectrogram:: setWindowStride( unsigned short astride )
 	TimeFrequency::setWindowStride( astride );
 
 	ratio = getWindowSize() / getWindowStride();
-	time_slots = (int) floor( ( (double)signal_length / (double)getWindowStride() ) - ratio + 1.0);
+	time_slots = static_cast<int>(floor(((static_cast<double>(signal_length) / static_cast<double>(getWindowStride())) - ratio + 1.0)));
 	
     if( spectrogram ) {
-	    if( (spectrogram = BiggerBlock( Complex *, spectrogram, time_slots )) == Null( Complex )){
-		    perror("Spectrogram:: setWindowStride - Can't reallocate Memory for spectrogram ");
-			abort();
+	    if( (spectrogram = BiggerBlock( Complex *, spectrogram, time_slots )) == Null( Complex * )){
+	     perror("Spectrogram:: setWindowStride - Can't reallocate Memory for spectrogram ");
+	  abort();
 		}
 	    if( (spectrogram[0] = BiggerBlock( Complex, spectrogram[0], (time_slots * getWindowSize()) )) == Null( Complex )){
 		    perror("Spectrogram:: setWindowStride - Can't reallocate Memory for spectrogram data");
@@ -78,9 +80,9 @@ void Spectrogram:: setWindowStride( unsigned short astride )
 		spectrum_data_length = (time_slots * getWindowSize());
 		bzero( (char *)spectrogram[0], spectrum_data_length * sizeof( Complex ) );
 	} else {
-	    if( (spectrogram = NewBlock( Complex *, time_slots )) == Null( Complex )){
-		    perror("Spectrogram:: setWindowStride - Can't allocate Memory for spectrogram ");
-			abort();
+	    if( (spectrogram = NewBlock( Complex *, time_slots )) == Null( Complex * )){
+	     perror("Spectrogram:: setWindowStride - Can't allocate Memory for spectrogram ");
+	  abort();
 		}
 	    if( (spectrogram[0] = NewBlock( Complex, (time_slots * getWindowSize()) )) == Null( Complex )){
 		    perror("Spectrogram:: setWindowStride - Can't allocate Memory for spectrogram data");
@@ -126,7 +128,7 @@ void Spectrogram::compute()
 	    half = ( getWindowSize() >> 1 );
 	    for(j=0; j < half; j++){
 		    double hamming;
-			hamming = 0.54 + 0.46*cos( M_PI * (double)j / (double)(half) );
+			hamming = 0.54 + 0.46*cos( M_PI * static_cast<double>(j) / static_cast<double>(half) );
 			spectrogram[i][half + j] *= hamming;
 			spectrogram[i][half - j - 1] *= hamming;
 		}
@@ -170,13 +172,13 @@ void Spectrogram:: print_Mathematica()
 
 void Spectrogram:: print_Gnuplot()
 {
-  register int i,j, status;
+  int i,j, status;
   float length, cnt, temp;
 
 #ifdef POSITIVE_F_ONLY
-  length = (float) getWindowSize() / 2.0;
+  length = static_cast<float>(getWindowSize()) / 2.0;
 #else
-  length = (float) getWindowSize(); // 2.0;
+  length = static_cast<float>(getWindowSize()); // 2.0;
 #endif
 
   if((status = fwrite((char*)&length, sizeof(float), 1, stdout))!=1){

@@ -27,7 +27,6 @@ static char rcsid_Wigner_h[] = "$Id: Wigner.h,v 1.3 1994/10/27 09:11:33 jak Exp 
 
 #include "Spectrogram.h"
 
-class Complex;
 
 class Wigner : public Spectrogram {
 public:

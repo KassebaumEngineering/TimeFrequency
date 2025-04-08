@@ -22,10 +22,11 @@
 
 static char rcsid_TimeFrequency_h[] = "$Id: TimeFrequency.h,v 1.2 1994/10/06 17:51:58 jak Exp $";
 
-class Complex;
+#include <complex>
+using Complex = std::complex<double>;
 
-extern void fft( Complex *, int );
-extern void inv_fft( Complex *, int );
+extern void fft( std::complex<double> *, int );
+extern void inv_fft( std::complex<double> *, int );
 
 enum Data_Window {
     Hanning = 0,
@@ -41,7 +42,7 @@ public:
 	double           sampling_frequency;
 	double           frequency_resolution;
 	double           frequency_band;
-	Complex         *signal;
+	std::complex<double> *signal;
 	int              signal_length;
 	int              isAnalytic;
 
@@ -55,7 +56,7 @@ public:
 	void setDataSignal( float *, int );
 	void setDataSignal( double *, int );
 	inline int  getSignalLength( void ) const { return signal_length; };
-	inline Complex * getDataSignal( void ) const { return signal; };
+	inline std::complex<double> * getDataSignal( void ) const { return signal; };
 	inline Data_Window getDataWindow( void ) const { return myWindow; };
 	inline int getWindowSize( void ) const { return window_size; };
 	

@@ -27,7 +27,6 @@ static char rcsid_Spectrogram_h[] = "$Id: Spectrogram.h,v 1.3 1994/10/27 09:11:3
 
 #include "TimeFrequency.h"
 
-class Complex;
 
 class Spectrogram : public TimeFrequency {
 public:

@@ -26,9 +26,11 @@
 #
 #
 
-CC=gcc
-CFLAGS=-ggdb -O2 -V2.5.8
-LIBS=-lm -lg++
+CXX=clang++
+CC=clang
+CXXFLAGS=-std=c++20 -Wall -Wextra -Wpedantic -ggdb -O2
+CFLAGS=-Wall -Wextra -pedantic -ggdb -O2
+LDLIBS=-lm
 
 SOURCES= Makefile main.cc fft.cc TimeFrequency.h TimeFrequency.cc Spectrogram.cc Spectrogram.h sine.c Wigner.cc Wigner.h Choi_Williams.cc Choi_Williams.h
 OBJECTS= fft.o Spectrogram.o TimeFrequency.o Wigner.o Choi_Williams.o
@@ -43,13 +45,13 @@ $(LINKS): %: main
 	-ln -s $< $@ 
 
 %.o: %.cc
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 sine: sine.o
-	$(CC) $< -o $@
+	$(CC) $(CFLAGS) $< -o $@
 
 $(EXES): %: %.o $(OBJECTS)
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(LIBS) -o $@ 
+	$(CXX) $(CXXFLAGS) $< $(OBJECTS) $(LDLIBS) -o $@
 
 clean:
 	rm -f *.o 

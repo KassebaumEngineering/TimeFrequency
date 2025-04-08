@@ -14,9 +14,11 @@
  
 static char rcsid_fft_cc[] = "$Id: fft.cc,v 1.1 1994/10/04 07:21:04 jak Exp $";
  
-#include <math.h>
-#include <Complex.h>
-#include <stdio.h>
+#include <cmath>
+#include <complex>
+#include <cstdio>
+
+using Complex = std::complex<double>;
 
 #define DEBUG
 
@@ -68,7 +70,7 @@ void fft( Complex *a, int N ) // ----> N MUST be a power of 2 !
 	for( le = 0x02; le<= N; le = le << 1) {
 		le1 = le >> 1;   // = le / 2 ;
 		u = Complex( 1.0, 0.0 );
-		w = Complex( cos( M_PI / (double) le1 ), sin( M_PI / (double) le1 ) );
+		w = Complex( cos( M_PI / static_cast<double>(le1) ), sin( M_PI / static_cast<double>(le1) ) );
 		for( j = 0; j < le1; j++ ){
 			for( i = j; i < N; i += le ){
 				ip = i + le1;
@@ -107,11 +109,11 @@ void inv_fft(Complex *a, int N) // ----> N MUST be a power of 2 !
 // inv_fft = 1/N * Complex_conj( fft( Complex_conj( a ) ) )  
 //
     for( i=0; i< N; i++){
-	    a[i] = conj( a[i] );
+	    a[i] = std::conj( a[i] );
 	}
 	fft( a, N );
     for( i=0; i< N; i++){
-	    a[i] = conj( a[i] ) / (double) N ;
+	    a[i] = std::conj( a[i] ) / static_cast<double>(N) ;
 	}
 	
 }

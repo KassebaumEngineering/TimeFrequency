@@ -20,10 +20,12 @@
 static char rcsid_TimeFrequency_cc[] = "$Id: TimeFrequency.cc,v 1.2 1994/10/07 06:55:29 jak Exp $";
 
 #include "TimeFrequency.h"
-#include <math.h>
-#include <Complex.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <complex>
+#include <cstdio>
+#include <cstdlib>
+
+using Complex = std::complex<double>;
 
 #define DEBUG
 
@@ -32,10 +34,10 @@ static char rcsid_TimeFrequency_cc[] = "$Id: TimeFrequency.cc,v 1.2 1994/10/07 0
 #define HILBERT_SIZE   2*HALF_HILBERT + 1   // Must be odd
 
 #define BLOCKSIZE    1024
-#define Null(A)             ((A *) 0)
-#define New(A)              ((A *) malloc( sizeof(A) ) )
-#define NewBlock(A,N)       ((A *) malloc( sizeof(A) * (N)) )
-#define BiggerBlock(A,B,N)  ((A *) realloc( (void *)(B), sizeof(A) * (N)))
+#define Null(A)             (static_cast<A *>(nullptr))
+#define New(A)              (static_cast<A *>(malloc(sizeof(A))))
+#define NewBlock(A,N)       (static_cast<A *>(malloc(sizeof(A) * (N))))
+#define BiggerBlock(A,B,N)  (static_cast<A *>(realloc(static_cast<void *>(B), sizeof(A) * (N))))
 
 //
 // Constructor
@@ -43,8 +45,8 @@ static char rcsid_TimeFrequency_cc[] = "$Id: TimeFrequency.cc,v 1.2 1994/10/07 0
 
 TimeFrequency:: TimeFrequency(): myWindow( Rectangular ), window_size( DEFAULT_WSIZE ), stride( DEFAULT_WSIZE/2), signal(0), sampling_frequency(1.0), isAnalytic(0)
 {
-	frequency_band       = ( sampling_frequency );              // ( in Hz ) see Nyquist
-    frequency_resolution = ( frequency_band / (double) window_size);  // ( in Hz per sample )
+	frequency_band       = (sampling_frequency);              // ( in Hz ) see Nyquist
+	   frequency_resolution = (frequency_band / static_cast<double>(window_size));  // ( in Hz per sample )
 };
 
 //
@@ -116,7 +118,7 @@ int TimeFrequency::setWindowSize( unsigned short asize )
     }	    
 
     window_size          = the_size;
-    frequency_resolution = ( frequency_band / (double) window_size);  // ( in Hz per sample )
+    frequency_resolution = (frequency_band / static_cast<double>(window_size));  // ( in Hz per sample )
 	
 	return rtn;;
 };
@@ -142,14 +144,14 @@ void TimeFrequency::setWindowStride( unsigned short asize )
 
 void TimeFrequency::setSamplingFrequency( double afreq )
 { 
-	sampling_frequency   = afreq; 
-	frequency_band       = ( sampling_frequency );              // ( in Hz ) see Nyquist
-	frequency_resolution = ( frequency_band / (double) window_size);  // ( in Hz per sample )
+	sampling_frequency   = afreq;
+	frequency_band       = (sampling_frequency);              // ( in Hz ) see Nyquist
+	   frequency_resolution = (frequency_band / static_cast<double>(window_size));  // ( in Hz per sample )
 };
 
 void TimeFrequency::makeAnalytic()
 {
-    register int k, j, i;
+    int k, j, i;
 	static int initialized = 0;
 	static double hilbert_h[ HILBERT_SIZE ];
 
@@ -160,8 +162,8 @@ void TimeFrequency::makeAnalytic()
 	    double hamming;
 		hilbert_h[HALF_HILBERT] = 0.0;
 		for (i=1; i<=HALF_HILBERT; i++) {
-			hamming = 0.54 + 0.46*cos( M_PI * (double)i / (double)(HALF_HILBERT) );
-			hilbert_h[HALF_HILBERT-i] = hamming * ( -(double)( i%2 ) * 2.0 / ( M_PI * (double)(i) ) );
+			hamming = 0.54 + 0.46*cos( M_PI * static_cast<double>(i) / static_cast<double>(HALF_HILBERT) );
+			hilbert_h[HALF_HILBERT-i] = hamming * ( -static_cast<double>(i%2) * 2.0 / ( M_PI * static_cast<double>(i) ) );
 			hilbert_h[HALF_HILBERT+i] = -hilbert_h[HALF_HILBERT-i];
 		}
 		initialized = 1;
@@ -212,15 +214,15 @@ int    TimeFrequency:: setFrequencyResolution( double delta_freq )
   // wsize must be a power of 2 in number of samples.
   //
     for( flag = 0, i = 2; i < 0xffff; i = i<<1 ){
-	    if( (double) i >= wsize ){
-		    wsize = (double) i;
+	    if( static_cast<double>(i) >= wsize ){
+	     wsize = static_cast<double>(i);
 		    flag = 1;
 		    break;
 		}
 	}
 	
 	if( flag ) {
-		window_size = ( unsigned short ) wsize;
+		window_size = static_cast<unsigned short>(wsize);
 		frequency_resolution = delta_freq;  // ( in Hz per sample )
 		rtn = window_size;
 	} else {
